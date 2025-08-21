@@ -69,8 +69,9 @@ class NotadorGUI:
         main_frame.columnconfigure(1, weight=1)
         
         # Configurar pesos de las filas para mejor distribución
-        main_frame.rowconfigure(1, weight=3)  # Panel de grados/estudiantes
-        main_frame.rowconfigure(2, weight=1)  # Panel de progreso
+        main_frame.rowconfigure(0, weight=0)  # Panel de archivos - altura fija
+        main_frame.rowconfigure(1, weight=10)  # Panel de grados/estudiantes - máxima expansión
+        main_frame.rowconfigure(2, weight=3)  # Panel de progreso - expansión moderada
         
         # Sección de archivos
         files_frame = ttk.LabelFrame(main_frame, text="Archivos", padding="5")
@@ -109,6 +110,10 @@ class NotadorGUI:
         # Panel derecho - Lista de estudiantes
         students_frame = ttk.LabelFrame(main_frame, text="Estudiantes", padding="5")
         students_frame.grid(row=1, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), pady=5, padx=5)
+        students_frame.columnconfigure(0, weight=1)  # Hacer que la columna se expanda
+        students_frame.rowconfigure(0, weight=0)  # Fila de búsqueda - altura fija
+        students_frame.rowconfigure(1, weight=1)  # Fila del Treeview - expansión máxima
+        students_frame.rowconfigure(2, weight=0)  # Fila de botones - altura fija
         
         # Barra de búsqueda
         self.search_var = tk.StringVar()
@@ -116,7 +121,7 @@ class NotadorGUI:
         self.search_entry = PlaceholderEntry(students_frame, 
                                            placeholder="Buscar estudiante...",
                                            textvariable=self.search_var)
-        self.search_entry.pack(fill=tk.X, pady=5)
+        self.search_entry.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=5, pady=5)
         
         # Estilo personalizado para el Treeview
         style = ttk.Style()
@@ -135,10 +140,9 @@ class NotadorGUI:
 
         # Lista de estudiantes con scrollbar
         student_list_frame = ttk.Frame(students_frame)
-        student_list_frame.pack(fill=tk.BOTH, expand=True)
-        
-        scrollbar = ttk.Scrollbar(student_list_frame)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        student_list_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
+        student_list_frame.columnconfigure(0, weight=1)
+        student_list_frame.rowconfigure(0, weight=1)
         
         # Treeview con checkboxes y estilo moderno
         self.students_tree = ttk.Treeview(student_list_frame, 
@@ -146,6 +150,10 @@ class NotadorGUI:
                                         show='headings', 
                                         selectmode='browse',
                                         style="Custom.Treeview")
+        self.students_tree.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        
+        scrollbar = ttk.Scrollbar(student_list_frame, orient=tk.VERTICAL, command=self.students_tree.yview)
+        scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
         
         # Configurar columnas
         self.students_tree.heading('check', text='✓')
@@ -176,22 +184,24 @@ class NotadorGUI:
                         self.students_tree.set(item, 'check', '☒')
         
         self.students_tree.bind('<Button-1>', on_tree_click)
-        self.students_tree.pack(fill=tk.BOTH, expand=True)
-        scrollbar.config(command=self.students_tree.yview)
         self.students_tree.config(yscrollcommand=scrollbar.set)
         
         # Botones de acción
         button_frame = ttk.Frame(students_frame)
-        button_frame.pack(fill=tk.X, pady=5)
+        button_frame.grid(row=2, column=0, sticky=(tk.W, tk.E), padx=5, pady=5)
+        button_frame.columnconfigure(0, weight=1)
+        button_frame.columnconfigure(1, weight=1)
         
         ttk.Button(button_frame, text="Procesar Seleccionados", 
-                  command=self.process_selected).pack(side=tk.LEFT, padx=5)
+                  command=self.process_selected).grid(row=0, column=0, padx=(0,2), sticky=(tk.W, tk.E))
         ttk.Button(button_frame, text="Procesar Todos", 
-                  command=self.process_all).pack(side=tk.LEFT)
+                  command=self.process_all).grid(row=0, column=1, padx=(2,0), sticky=(tk.W, tk.E))
         
         # Panel inferior - Progreso
         progress_frame = ttk.LabelFrame(main_frame, text="Progreso", padding="5")
-        progress_frame.grid(row=2, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=5)
+        progress_frame.grid(row=2, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), pady=5)
+        progress_frame.columnconfigure(0, weight=1)  # Hacer que la columna se expanda
+        progress_frame.rowconfigure(1, weight=1)  # Hacer que la fila del área de texto se expanda
         
         # Frame para la barra de progreso y el porcentaje
         progress_bar_frame = ttk.Frame(progress_frame)
@@ -416,9 +426,9 @@ class NotadorGUI:
             
             for i, item in enumerate(self.checked_items):
                 values = self.students_tree.item(item)['values']
-                student_id = str(values[0]).strip()
-                student_name = str(values[1]).strip()
-                grupo = str(values[2]).strip()
+                student_id = str(values[1]).strip()  # ID está en la segunda columna (índice 1)
+                student_name = str(values[2]).strip()  # Nombre está en la tercera columna (índice 2)
+                grupo = str(values[3]).strip()  # Grupo está en la cuarta columna (índice 3)
                 
                 try:
                     # Obtener el periodo del estudiante desde el DataFrame
