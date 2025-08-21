@@ -41,8 +41,16 @@ class NotadorGUI:
         style.configure('TButton', font=('Arial', 10), padding=5)
         style.configure('Heading.TLabel', font=('Arial', 12, 'bold'))
         style.configure('TLabelframe.Label', font=('Arial', 10, 'bold'))
-        style.configure('TFrame', background='#f5f5f5')
-        style.configure('TLabelframe', background='#f5f5f5')
+        
+        # Estilos personalizados para cada sección
+        style.configure('Files.TLabelframe', background='#FFE6F3')  # Rosa suave
+        style.configure('Files.TLabelframe.Label', font=('Arial', 10, 'bold'), background='#FFE6F3')
+        
+        style.configure('Students.TLabelframe', background='#E6E6FA')  # Lila suave
+        style.configure('Students.TLabelframe.Label', font=('Arial', 10, 'bold'), background='#E6E6FA')
+        
+        style.configure('Progress.TLabelframe', background='#FFD6FF')  # Fucsia suave
+        style.configure('Progress.TLabelframe.Label', font=('Arial', 10, 'bold'), background='#FFD6FF')
         
         # Colores personalizados para los widgets
         self.root.configure(background='#f0f0f0')
@@ -74,7 +82,7 @@ class NotadorGUI:
         main_frame.rowconfigure(2, weight=3)  # Panel de progreso - expansión moderada
         
         # Sección de archivos
-        files_frame = ttk.LabelFrame(main_frame, text="Archivos", padding="5")
+        files_frame = ttk.LabelFrame(main_frame, text="Archivos", padding="5", style='Files.TLabelframe')
         files_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N), pady=5)
         
         # Excel
@@ -100,7 +108,7 @@ class NotadorGUI:
                   command=self.load_data).grid(row=3, column=0, columnspan=3, pady=5)
         
         # Panel izquierdo - Lista de grados
-        grades_frame = ttk.LabelFrame(main_frame, text="Grados", padding="5")
+        grades_frame = ttk.LabelFrame(main_frame, text="Grados", padding="5", style='Students.TLabelframe')
         grades_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), pady=5)
         
         self.grades_listbox = tk.Listbox(grades_frame, width=20)
@@ -108,7 +116,7 @@ class NotadorGUI:
         self.grades_listbox.bind('<<ListboxSelect>>', self.on_grade_select)
         
         # Panel derecho - Lista de estudiantes
-        students_frame = ttk.LabelFrame(main_frame, text="Estudiantes", padding="5")
+        students_frame = ttk.LabelFrame(main_frame, text="Estudiantes", padding="5", style='Students.TLabelframe')
         students_frame.grid(row=1, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), pady=5, padx=5)
         students_frame.columnconfigure(0, weight=1)  # Hacer que la columna se expanda
         students_frame.rowconfigure(0, weight=0)  # Fila de búsqueda - altura fija
@@ -198,7 +206,7 @@ class NotadorGUI:
                   command=self.process_all).grid(row=0, column=1, padx=(2,0), sticky=(tk.W, tk.E))
         
         # Panel inferior - Progreso
-        progress_frame = ttk.LabelFrame(main_frame, text="Progreso", padding="5")
+        progress_frame = ttk.LabelFrame(main_frame, text="Progreso", padding="5", style='Progress.TLabelframe')
         progress_frame.grid(row=2, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), pady=5)
         progress_frame.columnconfigure(0, weight=1)  # Hacer que la columna se expanda
         progress_frame.rowconfigure(1, weight=1)  # Hacer que la fila del área de texto se expanda
