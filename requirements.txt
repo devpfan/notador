@@ -1,0 +1,5 @@
+pandas
+python-docx
+pywin32
+ttkthemes
+pyinstaller

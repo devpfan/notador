@@ -1,0 +1,41 @@
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribución / empaquetado
+dist/
+build/
+*.egg-info/
+*.egg
+
+# Entornos virtuales
+venv/
+.venv/
+.venv313/
+env/
+ENV/
+
+# IDEs y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos de PyInstaller
+*.spec
+
+# Archivos temporales de Windows
+Thumbs.db
+*.tmp
+
+# Archivos de Excel y Word temporales
+~$*.xlsx
+~$*.docx
+~$*.xls
+~$*.doc
+
+# Logs y bases de datos
+*.log
+*.sqlite
+debug_notas.txt
